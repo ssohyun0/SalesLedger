@@ -15,7 +15,13 @@ public class MainController {
             FXMLLoader loader = new FXMLLoader(getClass().getResource("CustomerRegisterView.fxml"));
             Stage stage = new Stage();
             stage.setTitle("고객 등록");
-            stage.setScene(new Scene(loader.load()));
+            Scene scene = new Scene(loader.load());
+
+            // 창 크기 지정
+            stage.setWidth(500);  // 가로 500px
+            stage.setHeight(400);
+
+            stage.setScene(scene);
             stage.showAndWait(); // 등록 창 닫힐 때까지 대기
         } catch (IOException e) {
             e.printStackTrace();
@@ -30,8 +36,15 @@ public class MainController {
 
     @FXML
     private void onCustomerListClicked() {
-        System.out.println("고객 리스트 버튼 클릭됨");
-
+        try {
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("CustomerListView.fxml"));
+            Stage stage = new Stage();
+            stage.setTitle("고객 리스트");
+            stage.setScene(new Scene(loader.load()));
+            stage.show();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     @FXML
