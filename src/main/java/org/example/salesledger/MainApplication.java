@@ -26,6 +26,9 @@ public class MainApplication extends Application {
             }
         }
 
+        // DB 연결 및 테이블 초기화
+        DataBase.initializeTables();
+
         // UI Load
         FXMLLoader fxmlLoader = new FXMLLoader(MainApplication.class.getResource("MainView.fxml"));
         Scene scene = new Scene(fxmlLoader.load(), 700, 500);
