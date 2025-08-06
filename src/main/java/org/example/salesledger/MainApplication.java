@@ -34,6 +34,11 @@ public class MainApplication extends Application {
         Scene scene = new Scene(fxmlLoader.load(), 700, 500);
         //Scene scene = new Scene(fxmlLoader.load());
 
+        //CSS 적용
+        scene.getStylesheets().add(getClass().getResource("style.css").toExternalForm());
+
+
+
         stage.setTitle("고객 장부 프로그램");
         stage.setScene(scene);
 

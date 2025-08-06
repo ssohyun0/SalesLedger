@@ -1,14 +1,40 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import java.lang.*?>
-<?import java.util.*?>
-<?import javafx.scene.*?>
-<?import javafx.scene.control.*?>
-<?import javafx.scene.layout.*?>
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.TableColumn?>
+<?import javafx.scene.control.TableView?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.HBox?>
 
-<AnchorPane xmlns="http://javafx.com/javafx"
+<BorderPane xmlns="http://javafx.com/javafx"
             xmlns:fx="http://javafx.com/fxml"
-            fx:controller="org.example.salesledger.CustomerListView"
-            prefHeight="400.0" prefWidth="600.0">
+            fx:controller="org.example.salesledger.CustomerListController">
 
-</AnchorPane>
+    <!-- 상단: 뒤로가기 버튼 + 검색창 -->
+    <top>
+        <HBox spacing="10">
+            <padding>
+                <Insets top="10" right="10" bottom="10" left="10"/>
+            </padding>
+            <Button text="뒤로가기" onAction="#onBackClicked"/>
+            <Label text="이름:"/>
+            <TextField fx:id="searchField" promptText="이름 입력"/>
+            <Button text="검색" onAction="#onSearchClicked"/>
+        </HBox>
+    </top>
+
+    <!-- 중앙: 고객 리스트 테이블 -->
+    <center>
+        <TableView fx:id="customerTable" prefHeight="600" prefWidth="800">
+            <columns>
+                <TableColumn fx:id="nameColumn" text="이름" prefWidth="150"/>
+                <TableColumn fx:id="phoneColumn" text="전화번호" prefWidth="200"/>
+                <TableColumn fx:id="actionColumn" text="작업" prefWidth="150"/>
+            </columns>
+        </TableView>
+    </center>
+
+</BorderPane>
