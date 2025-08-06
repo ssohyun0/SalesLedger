@@ -1,0 +1,37 @@
+plugins {
+  id 'application'
+}
+
+group = 'org.example'
+version = '1.0-SNAPSHOT'
+
+repositories {
+  mavenCentral()
+}
+
+java {
+  toolchain {
+    languageVersion = JavaLanguageVersion.of(24) // JDK 24도 가능하지만 17이 안정적
+  }
+}
+
+dependencies {
+  implementation 'org.controlsfx:controlsfx:11.2.1'
+  implementation 'org.xerial:sqlite-jdbc:3.46.0.0'
+}
+
+tasks.withType(JavaExec) {
+  jvmArgs = [
+          '--module-path', '/Users/jangsohyun/JavaFX/javafx-sdk-24.0.2/lib',
+          '--add-modules', 'javafx.controls,javafx.fxml'
+  ]
+}
+
+application {
+  mainClass = 'org.example.salesledger.HelloApplication'
+}
+
+//javafx {
+//  version = '24.0.2'
+//  modules = ['javafx.controls', 'javafx.fxml']
+//}

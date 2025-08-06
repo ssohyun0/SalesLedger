@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.layout.VBox?>
+
+<?import javafx.scene.control.Button?>
+
+<VBox alignment="CENTER" spacing="20.0"
+      xmlns:fx="http://javafx.com/fxml"
+      fx:controller="org.example.salesledger.MainController">
+
+  <padding>
+    <Insets bottom="20.0" left="20.0" right="20.0" top="20.0"/>
+  </padding>
+
+  <Button text= "고객 등록" onAction="#onCustomerRegisterClicked" prefWidth="300" prefHeight="50"/>
+  <Button text="수리 등록" onAction="#onRepairRegisterClicked" prefWidth="300" prefHeight="50"/>
+  <Button text="고객 리스트" onAction="#onCustomerListClicked" prefWidth="300" prefHeight="50"/>
+  <Button text="종료" onAction="#onExitClicked" prefWidth="300" prefHeight="50"/>
+</VBox>
