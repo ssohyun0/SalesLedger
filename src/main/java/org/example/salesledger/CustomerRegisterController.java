@@ -18,6 +18,7 @@ public class CustomerRegisterController {
 
     @FXML
     public void initialize() {
+
         // 전화번호 입력 시 자동 하이픈 처리 (커서 위치 유지)
         phoneField.textProperty().addListener((obs, oldValue, newValue) -> {
             String digits = newValue.replaceAll("[^0-9]", "");
