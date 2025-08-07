@@ -27,14 +27,21 @@
     <Button text="고객 확인" onAction="#onCheckCustomer" GridPane.rowIndex="2" GridPane.columnIndex="1"/>
 
     <!-- 수리 등록 (처음엔 숨김 처리) -->
+
     <Label fx:id="mileageLabel" text="주행 거리:" GridPane.rowIndex="3" GridPane.columnIndex="0" visible="false"/>
     <TextField fx:id="mileageField" GridPane.rowIndex="3" GridPane.columnIndex="1" visible="false"/>
 
-    <Label fx:id="descLabel" text="수리 내역:" GridPane.rowIndex="4" GridPane.columnIndex="0" visible="false"/>
-    <TextField fx:id="descField" GridPane.rowIndex="4" GridPane.columnIndex="1" visible="false"/>
-
     <Label fx:id="costLabel" text="수리 금액:" GridPane.rowIndex="5" GridPane.columnIndex="0" visible="false"/>
     <TextField fx:id="costField" GridPane.rowIndex="5" GridPane.columnIndex="1" visible="false"/>
+
+    <Label fx:id="descLabel" text="수리 내역:" GridPane.rowIndex="4" GridPane.columnIndex="0" visible="false"/>
+    <TextArea fx:id="descField"
+              GridPane.rowIndex="4"
+              GridPane.columnIndex="1"
+              prefWidth="100"
+              prefRowCount="4"
+              wrapText="true"
+              visible="false"/>
 
     <Button fx:id="registerButton" text="수리 등록"
             onAction="#onRegister"

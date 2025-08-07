@@ -9,6 +9,7 @@ import java.awt.*;
 import javafx.scene.control.TextField;
 import javafx.scene.control.Label;
 import javafx.scene.control.Button;
+import javafx.scene.control.TextArea;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -24,7 +25,9 @@ public class RepairRegisterController {
 
     @FXML private TextField nameField, bikeNumberField;
     @FXML private Label mileageLabel, descLabel, costLabel;
-    @FXML private TextField mileageField, descField, costField;
+    @FXML private TextField mileageField, costField;
+    @FXML private TextArea descField;
+
     @FXML private Button registerButton;
 
     private int motorbikeId = -1;
