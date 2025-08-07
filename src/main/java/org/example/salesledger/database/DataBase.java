@@ -24,6 +24,11 @@ public class DataBase {
             }
 
             Connection conn = DriverManager.getConnection(DB_URL);
+
+            // SQLite의 foreign key 제약 조건 활성화
+            Statement stmt = conn.createStatement();
+            stmt.execute("PRAGMA foreign_keys = ON");
+
             System.out.println("✅ SQLite 연결 성공: " + dbFile.getAbsolutePath());
             return conn;
         } catch (SQLException e) {
