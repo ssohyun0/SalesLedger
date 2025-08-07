@@ -18,7 +18,7 @@ public class MainController {
             Scene scene = new Scene(loader.load());
 
             // 창 크기 지정
-            stage.setWidth(500);  // 가로 500px
+            stage.setWidth(500);
             stage.setHeight(400);
 
             stage.setScene(scene);
@@ -31,7 +31,20 @@ public class MainController {
     @FXML
     private void onRepairRegisterClicked() {
         System.out.println("수리 등록 버튼 클릭됨");
+        try {
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("RepairRegisterView.fxml"));
+            Stage stage = new Stage();
+            stage.setTitle("수리 등록");
+            stage.setScene(new Scene(loader.load()));
 
+            // 창 크기 지정
+            stage.setWidth(500);
+            stage.setHeight(400);
+
+            stage.show();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     @FXML
