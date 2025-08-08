@@ -87,34 +87,47 @@ public class CustomerRegisterController {
 
             // 신규 고객 등록
             if (customerId == -1) {
+                // 고객이 없으면 등록
                 String insertCustomerSql = "INSERT INTO customer (name, phone) VALUES (?, ?)";
-                try (PreparedStatement pstmt = conn.prepareStatement(insertCustomerSql, PreparedStatement.RETURN_GENERATED_KEYS)) {
+                try (PreparedStatement pstmt = conn.prepareStatement(insertCustomerSql, Statement.RETURN_GENERATED_KEYS)) {
                     pstmt.setString(1, name);
                     pstmt.setString(2, phone);
                     pstmt.executeUpdate();
-
-                    ResultSet keys = pstmt.getGeneratedKeys();
-                    if (keys.next()) {
-                        customerId = keys.getInt(1);
+                    ResultSet generatedKeys = pstmt.getGeneratedKeys();
+                    if (generatedKeys.next()) {
+                        customerId = generatedKeys.getInt(1);
                     }
                 }
             }
 
-            // 오토바이 등록
-            String insertBikeSql = "INSERT INTO motorbike (customer_id, bike_number, bike_model) VALUES (?, ?, ?)";
-            try (PreparedStatement pstmt = conn.prepareStatement(insertBikeSql)) {
+            // 오토바이 등록 전, 동일 고객에 같은 오토바이 번호가 이미 있는지 확인
+            String checkBikeSql = "SELECT id FROM motorbike WHERE customer_id = ? AND bike_number = ?";
+            try (PreparedStatement pstmt = conn.prepareStatement(checkBikeSql)) {
                 pstmt.setInt(1, customerId);
                 pstmt.setString(2, bikeNumber);
-                pstmt.setString(3, bikeModel);
-                pstmt.executeUpdate();
+                ResultSet rs = pstmt.executeQuery();
+
+                if (!rs.next()) {
+                    // 오토바이 등록
+                    String insertBikeSql = "INSERT INTO motorbike (customer_id, bike_number, bike_model) VALUES (?, ?, ?)";
+                    try (PreparedStatement insertPstmt = conn.prepareStatement(insertBikeSql)) {
+                        insertPstmt.setInt(1, customerId);
+                        insertPstmt.setString(2, bikeNumber);
+                        insertPstmt.setString(3, bikeModel);
+                        insertPstmt.executeUpdate();
+                    }
+                } else {
+                    showAlert("중복 등록", "이 고객은 해당 오토바이 번호를 이미 등록했습니다.");
+                    return;
+                }
             }
 
-            showAlert("등록 완료", "고객 정보가 저장되었습니다.");
-            closeWindow();
+            showAlert("등록 완료", "고객 및 오토바이 정보가 저장되었습니다.");
+            ((Stage) nameField.getScene().getWindow()).close();
 
         } catch (SQLException e) {
             e.printStackTrace();
-            showAlert("DB 오류", "데이터 저장 중 오류가 발생했습니다: " + e.getMessage());
+            showAlert("DB 오류", "데이터베이스 처리 중 오류가 발생했습니다.");
         }
     }
 
@@ -128,11 +141,11 @@ public class CustomerRegisterController {
         stage.close();
     }
 
-    private void showAlert(String title, String content) {
+    private void showAlert(String title, String message) {
         Alert alert = new Alert(Alert.AlertType.INFORMATION);
         alert.setTitle(title);
         alert.setHeaderText(null);
-        alert.setContentText(content);
+        alert.setContentText(message);
         alert.showAndWait();
     }
 }
