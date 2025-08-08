@@ -4,8 +4,9 @@ permissions:
 name: Build Windows EXE
 on:
   push:
-    tags: ['v*'] 
-    
+    tags: ['v*']
+  workflow_dispatch:
+
 jobs:
   build:
     runs-on: windows-latest
@@ -15,11 +16,20 @@ jobs:
         with:
           distribution: temurin
           java-version: '21'
+
       - name: Build installer
         run: .\gradlew --no-daemon clean jpackage
+
+      # 실패해도 여기서 exe는 받을 수 있게 아티팩트 업로드(선택아님, 강추)
+      - name: Upload EXE artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: SalesLedger-windows
+          path: build/jpackage/*.exe
+
       - name: Create GitHub Release and upload EXE
         uses: softprops/action-gh-release@v2
         with:
-          files: build/jpackage/**
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          token: ${{ secrets.GITHUB_TOKEN }}
+          files: build/jpackage/*.exe  
+          generate_release_notes: true
