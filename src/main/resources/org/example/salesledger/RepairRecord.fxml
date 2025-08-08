@@ -27,6 +27,7 @@
                 <TableColumn fx:id="colMileage" text="주행 거리" prefWidth="100"/>
                 <TableColumn fx:id="colCost" text="수리 금액" prefWidth="100"/>
                 <TableColumn fx:id="colRepairDate" text="수리 날짜" prefWidth="100"/> <!-- 날짜 컬럼 -->
+                <TableColumn fx:id="colActions" text="작업" prefWidth="160"/>
             </columns>
         </TableView>
     </center>
