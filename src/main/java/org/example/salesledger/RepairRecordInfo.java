@@ -2,15 +2,17 @@ package org.example.salesledger;
 
 public class RepairRecordInfo {
     private final int index;
+    private final int repairId;
     private final String bikeNumber;
     private final String mileage;
     private final String cost;
     private final String repairDate;
     private final String description;
 
-    public RepairRecordInfo(int index, String bikeNumber, String description,
-                            String mileage, String cost, String repairDate) {
+    public RepairRecordInfo(int index, int repairId, String bikeNumber,
+                            String description, String mileage, String cost, String repairDate) {
         this.index = index;
+        this.repairId = repairId;
         this.bikeNumber = bikeNumber;
         this.description = description;
         this.mileage = mileage;
@@ -19,6 +21,7 @@ public class RepairRecordInfo {
     }
 
     public int getIndex() { return index; }
+    public int getRepairId() { return repairId; }
     public String getBikeNumber() { return bikeNumber; }
     public String getDescription() { return description; }
     public String getMileage() { return mileage; }
