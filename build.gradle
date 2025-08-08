@@ -47,13 +47,19 @@ jlink {
   }
 
   jpackage {
-    installerType = 'exe'          // 또는 'msi'
+    installerType = 'exe'
     appVersion = project.version
-    vendor = 'YourName'            // 변경
-    winMenu = true
-    winShortcut = true
-    icon = file('packaging/icon.ico') // 선택
-    // DB 등 사용자 데이터는 Program Files 밖 경로 사용 권장(권한 이슈 회피)
-    // 필요시 --win-dir-chooser 등 옵션도 추가 가능
+    vendor = 'YourName'
+
+    installerOptions = [
+            '--win-menu',
+            '--win-shortcut'
+    ]
+
+    // 아이콘은 파일이 있을 때만 지정
+    def ico = file('packaging/icon.ico')
+    if (ico.exists()) {
+      icon = ico
+    }
   }
 }
