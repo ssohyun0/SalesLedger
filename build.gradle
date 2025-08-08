@@ -42,8 +42,12 @@ jlink {
   // JavaFX 의존성 자동 포함
   addExtraDependencies('javafx')
 
+  mergedModuleName = 'salesledger'
+  forceMerge 'controlsfx', 'sqlite-jdbc'
+
   launcher {
     name = 'SalesLedger'
+    jvmArgs = []
   }
 
   jpackage {
