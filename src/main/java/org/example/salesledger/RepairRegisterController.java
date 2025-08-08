@@ -2,39 +2,31 @@ package org.example.salesledger;
 
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
+import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 import org.example.salesledger.database.DataBase;
 
-import java.awt.*;
-import javafx.scene.control.TextField;
-import javafx.scene.control.Label;
-import javafx.scene.control.Button;
-import javafx.scene.control.TextArea;
-
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-
+import java.sql.*;
 import java.text.DecimalFormat;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.function.UnaryOperator;
 import javafx.util.StringConverter;
 import javafx.util.converter.NumberStringConverter;
 
 public class RepairRegisterController {
 
-    @FXML private TextField nameField, bikeNumberField;
+    @FXML private TextField nameField, phoneField;
     @FXML private Label mileageLabel, descLabel, costLabel;
     @FXML private TextField mileageField, costField;
     @FXML private TextArea descField;
-
     @FXML private Button registerButton;
+    @FXML private VBox bikeToggleContainer;
 
     private int motorbikeId = -1;
 
     @FXML
     public void initialize() {
-        // 주행거리와 수리금액 필드에 쉼표 포맷터 적용
         setCommaFormatter(mileageField);
         setCommaFormatter(costField);
     }
@@ -42,7 +34,6 @@ public class RepairRegisterController {
     private void setCommaFormatter(TextField textField) {
         DecimalFormat format = new DecimalFormat("#,###");
 
-        // 입력 도중 쉼표 반영
         textField.textProperty().addListener((obs, oldVal, newVal) -> {
             String digits = newVal.replaceAll(",", "").replaceAll("[^\\d]", "");
             if (digits.isEmpty()) {
@@ -53,17 +44,14 @@ public class RepairRegisterController {
             try {
                 long number = Long.parseLong(digits);
                 String formatted = format.format(number);
-
-                // 커서 위치 유지
                 int caretPos = textField.getCaretPosition();
                 textField.setText(formatted);
                 textField.positionCaret(caretPos + (formatted.length() - newVal.length()));
             } catch (NumberFormatException e) {
-                // 무시: 숫자가 너무 크거나 비정상일 경우
+                // 무시
             }
         });
 
-        // 첫 포커스시 전체 선택 or 비우기
         textField.focusedProperty().addListener((obs, wasFocused, isNowFocused) -> {
             if (isNowFocused && textField.getText().equals("0")) {
                 textField.clear();
@@ -74,42 +62,79 @@ public class RepairRegisterController {
     @FXML
     private void onCheckCustomer() {
         String name = nameField.getText().trim();
-        String bikeNumber = bikeNumberField.getText().trim();
+        String phoneSuffix = phoneField.getText().trim();
 
-        if (name.isEmpty() || bikeNumber.isEmpty()) {
-            showAlert("입력 오류", "이름과 오토바이 번호를 입력해주세요.");
+        if (name.isEmpty() || phoneSuffix.isEmpty()) {
+            showAlert("입력 오류", "이름과 전화번호 뒷자리를 입력해주세요.");
             return;
         }
 
         try (Connection conn = DataBase.connect()) {
             String sql = """
-                SELECT m.id FROM customer c
+                SELECT m.id, m.bike_number 
+                FROM customer c
                 JOIN motorbike m ON c.id = m.customer_id
-                WHERE c.name = ? AND m.bike_number = ?
+                WHERE c.name = ? AND substr(replace(c.phone, '-', ''), -4) = ?
             """;
+
             PreparedStatement pstmt = conn.prepareStatement(sql);
             pstmt.setString(1, name);
-            pstmt.setString(2, bikeNumber);
+            pstmt.setString(2, phoneSuffix);
             ResultSet rs = pstmt.executeQuery();
 
+            List<Integer> motorbikeIds = new ArrayList<>();
+            List<String> bikeNumbers = new ArrayList<>();
 
-            if (rs.next()) {
-                motorbikeId = rs.getInt("id");
-
-                mileageLabel.setVisible(true);
-                mileageField.setVisible(true);
-                descLabel.setVisible(true);
-                descField.setVisible(true);
-                costLabel.setVisible(true);
-                costField.setVisible(true);
-                registerButton.setVisible(true);
-            } else {
-                showAlert("고객 없음", "입력한 정보와 일치하는 고객이 없습니다.");
+            while (rs.next()) {
+                motorbikeIds.add(rs.getInt("id"));
+                bikeNumbers.add(rs.getString("bike_number"));
             }
+
+            if (motorbikeIds.isEmpty()) {
+                showAlert("고객 없음", "입력한 정보와 일치하는 고객이 없습니다.");
+            } else if (motorbikeIds.size() == 1) {
+                motorbikeId = motorbikeIds.get(0);
+                showRepairInputFields();
+            } else {
+                showBikeToggleUI(motorbikeIds, bikeNumbers);
+            }
+
         } catch (SQLException e) {
             e.printStackTrace();
             showAlert("DB 오류", "고객 확인 중 오류 발생: " + e.getMessage());
         }
+    }
+
+    private void showBikeToggleUI(List<Integer> ids, List<String> numbers) {
+        ToggleGroup group = new ToggleGroup();
+        bikeToggleContainer.getChildren().clear();
+
+        for (int i = 0; i < ids.size(); i++) {
+            RadioButton rb = new RadioButton(numbers.get(i));
+            int selectedId = ids.get(i);
+            rb.setToggleGroup(group);
+            rb.setOnAction(e -> {
+                motorbikeId = selectedId;
+                showRepairInputFields();
+            });
+            bikeToggleContainer.getChildren().add(rb);
+        }
+
+        bikeToggleContainer.setVisible(true);
+        bikeToggleContainer.setManaged(true);
+    }
+
+    private void showRepairInputFields() {
+        mileageLabel.setVisible(true); mileageLabel.setManaged(true);
+        mileageField.setVisible(true); mileageField.setManaged(true);
+
+        descLabel.setVisible(true); descLabel.setManaged(true);
+        descField.setVisible(true); descField.setManaged(true);
+
+        costLabel.setVisible(true); costLabel.setManaged(true);
+        costField.setVisible(true); costField.setManaged(true);
+
+        registerButton.setVisible(true); registerButton.setManaged(true);
     }
 
     @FXML
