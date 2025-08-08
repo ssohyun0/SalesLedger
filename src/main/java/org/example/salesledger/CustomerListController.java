@@ -3,15 +3,15 @@ package org.example.salesledger;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
+import javafx.scene.Parent;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.stage.Stage;
 import org.example.salesledger.database.DataBase;
 
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
+import java.io.IOException;
+import java.sql.*;
 import javafx.scene.layout.HBox;
 
 public class CustomerListController {
@@ -21,7 +21,6 @@ public class CustomerListController {
     @FXML private TableColumn<CustomerInfo, String> nameColumn;
     @FXML private TableColumn<CustomerInfo, String> phoneColumn;
     @FXML private TableColumn<CustomerInfo, Void> actionColumn;
-
 
     private final ObservableList<CustomerInfo> customerData = FXCollections.observableArrayList();
 
@@ -52,11 +51,11 @@ public class CustomerListController {
         customerData.clear();
 
         String sql = """
-            SELECT DISTINCT c.name, c.phone
-            FROM customer c
-            WHERE c.name LIKE ?
-            ORDER BY c.name ASC, c.phone ASC
-            """;
+        SELECT c.id, c.name, c.phone
+        FROM customer c
+        WHERE c.name LIKE ?
+        ORDER BY c.name ASC, c.phone ASC
+        """;
 
         try (Connection conn = DataBase.connect();
              PreparedStatement pstmt = conn.prepareStatement(sql)) {
@@ -66,6 +65,7 @@ public class CustomerListController {
 
             while (rs.next()) {
                 customerData.add(new CustomerInfo(
+                        rs.getInt("id"),
                         rs.getString("name"),
                         rs.getString("phone")
                 ));
@@ -84,11 +84,25 @@ public class CustomerListController {
             private final Button detailButton = new Button("상세 보기");
             private final Button deleteButton = new Button("회원 삭제");
             {
+                // 상세보기 버튼 동작
                 detailButton.setOnAction(e -> {
                     CustomerInfo customer = getTableView().getItems().get(getIndex());
-                    System.out.println("상세 보기 클릭됨: " + customer.getName());
-                    // TODO: 상세보기 기능 구현
+                    try {
+                        FXMLLoader loader = new FXMLLoader(getClass().getResource("/org/example/salesledger/RepairRecord.fxml"));
+                        Parent repairRoot = loader.load();
+
+                        // 컨트롤러에 고객 정보 전달
+                        RepairRecordController controller = loader.getController();
+                        controller.init(customer.getId(), customer.getName(), customer.getPhone());
+
+                        // 현재 Scene의 Root 교체
+                        detailButton.getScene().setRoot(repairRoot);
+
+                    } catch (IOException ex) {
+                        ex.printStackTrace();
+                    }
                 });
+
 
                 deleteButton.setOnAction(e -> {
                     CustomerInfo customer = getTableView().getItems().get(getIndex());

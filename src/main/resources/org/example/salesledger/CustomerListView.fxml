@@ -19,7 +19,7 @@
             <padding>
                 <Insets top="10" right="10" bottom="10" left="10"/>
             </padding>
-            <Button text="뒤로가기" onAction="#onBackClicked"/>
+            <Button text="← 뒤로가기" onAction="#onBackClicked"/>
             <Label text="이름:"/>
             <TextField fx:id="searchField" promptText="이름 입력"/>
             <Button text="검색" onAction="#onSearchClicked"/>
