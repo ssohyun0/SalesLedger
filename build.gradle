@@ -39,15 +39,10 @@ javafx {
 }
 
 jlink {
-  // JavaFX 의존성 자동 포함
   addExtraDependencies('javafx')
-
-  mergedModuleName = 'salesledger'
-  forceMerge 'controlsfx', 'sqlite-jdbc'
 
   launcher {
     name = 'SalesLedger'
-    jvmArgs = []
   }
 
   jpackage {
@@ -60,7 +55,6 @@ jlink {
             '--win-shortcut'
     ]
 
-    // 아이콘은 파일이 있을 때만 지정
     def ico = file('packaging/icon.ico')
     if (ico.exists()) {
       icon = ico
