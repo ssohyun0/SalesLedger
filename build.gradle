@@ -1,9 +1,11 @@
 plugins {
   id 'application'
+  id 'org.openjfx.javafxplugin' version '0.1.0'
+  id 'org.beryx.jlink' version '3.0.1'
 }
 
 group = 'org.example'
-version = '1.0-SNAPSHOT'
+version = '1.0.0'
 
 repositories {
   mavenCentral()
@@ -11,7 +13,7 @@ repositories {
 
 java {
   toolchain {
-    languageVersion = JavaLanguageVersion.of(24) // JDK 24도 가능하지만 17이 안정적
+    languageVersion = JavaLanguageVersion.of(21)
   }
 }
 
@@ -20,18 +22,38 @@ dependencies {
   implementation 'org.xerial:sqlite-jdbc:3.46.0.0'
 }
 
-tasks.withType(JavaExec) {
-  jvmArgs = [
-          '--module-path', '/Users/jangsohyun/JavaFX/javafx-sdk-24.0.2/lib',
-          '--add-modules', 'javafx.controls,javafx.fxml'
-  ]
-}
+//tasks.withType(JavaExec) {
+//  jvmArgs = [
+//          '--module-path', '/Users/jangsohyun/JavaFX/javafx-sdk-24.0.2/lib',
+//          '--add-modules', 'javafx.controls,javafx.fxml'
+//  ]
+//}
 
 application {
   mainClass = 'org.example.salesledger.HelloApplication'
 }
 
-//javafx {
-//  version = '24.0.2'
-//  modules = ['javafx.controls', 'javafx.fxml']
-//}
+javafx {
+  version = '24.0.2'
+  modules = ['javafx.controls', 'javafx.fxml']
+}
+
+jlink {
+  // JavaFX 의존성 자동 포함
+  addExtraDependencies('javafx')
+
+  launcher {
+    name = 'SalesLedger'
+  }
+
+  jpackage {
+    installerType = 'exe'          // 또는 'msi'
+    appVersion = project.version
+    vendor = 'YourName'            // 변경
+    winMenu = true
+    winShortcut = true
+    icon = file('packaging/icon.ico') // 선택
+    // DB 등 사용자 데이터는 Program Files 밖 경로 사용 권장(권한 이슈 회피)
+    // 필요시 --win-dir-chooser 등 옵션도 추가 가능
+  }
+}
