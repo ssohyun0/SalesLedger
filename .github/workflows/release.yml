@@ -1,11 +1,11 @@
+permissions:
+  contents: write
+
 name: Build Windows EXE
 on:
   push:
     tags: ['v*'] 
-
-permissions:
-  contents: write
-  
+    
 jobs:
   build:
     runs-on: windows-latest
