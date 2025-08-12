@@ -30,16 +30,19 @@ dependencies {
 //}
 
 application {
-  mainClass = 'org.example.salesledger.HelloApplication'
+  mainModule = 'org.example.salesledger'
+  mainClass = 'org.example.salesledger.MainApplication'
 }
 
 javafx {
-  version = '22.0.2'
+  version = '21.0.2'
   modules = ['javafx.controls', 'javafx.fxml']
 }
 
 jlink {
   addExtraDependencies('javafx')
+  mergedModuleName = 'salesledger'
+  forceMerge 'controlsfx', 'sqlite-jdbc'
 
   launcher {
     name = 'SalesLedger'
@@ -52,13 +55,32 @@ jlink {
 
     installerOptions = [
             '--win-menu',
-            '--win-shortcut',
-            '--win-console'
+            '--win-shortcut'
     ]
 
     def ico = file('packaging/icon.ico')
     if (ico.exists()) {
       icon = ico
     }
+  }
+  tasks.withType(JavaCompile) {
+    options.encoding = 'UTF-8'
+  }
+
+  tasks.named('run', JavaExec) {
+    dependsOn 'jar'                 // 실행 전에 JAR 생성
+    mainClass = null                // 기본 mainClass 사용 안 함
+    classpath = files()             // classpath 비움(모듈 방식으로 실행)
+
+    // 런타임 클래스패스 + 빌드된 앱 JAR을 모듈 경로로 구성
+    def mp = files(
+            "$buildDir/libs/${project.name}-${project.version}.jar",
+            configurations.runtimeClasspath
+    ).asPath
+
+    jvmArgs = [
+            '--module-path', mp,
+            '-m', 'org.example.salesledger/org.example.salesledger.MainApplication'
+    ]
   }
 }
