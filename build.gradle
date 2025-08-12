@@ -52,7 +52,8 @@ jlink {
 
     installerOptions = [
             '--win-menu',
-            '--win-shortcut'
+            '--win-shortcut',
+            '--win-console'
     ]
 
     def ico = file('packaging/icon.ico')
